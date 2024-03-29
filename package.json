@@ -2,9 +2,9 @@
   "name": "hal-capital-assignment",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon dist/index.js"
   },
   "author": "Mohammed Muthahhar",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.2.4"
+    "mongoose": "^8.2.4",
+    "nodemon": "^3.1.0"
   }
 }
