@@ -10,6 +10,10 @@ import {
 } from "./user.controller";
 import { MongooseError } from "mongoose";
 import request from "supertest";
+import {
+  ERROR_MESSAGES,
+  SUCCESS_RESPONSES,
+} from "../libs/constants/responses.const";
 
 jest.mock("../models/user.model");
 
@@ -47,7 +51,7 @@ describe("User Controller - createUser", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       success: true,
-      message: "User created successfully",
+      message: SUCCESS_RESPONSES.CREATED_SUCCESSFULLY,
       data: { _id: "userid" },
     });
   });
@@ -62,7 +66,7 @@ describe("User Controller - createUser", () => {
 
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      message: "User Creation Failed",
+      message: ERROR_MESSAGES.CREATED_FAILED,
     });
   });
 
@@ -78,7 +82,7 @@ describe("User Controller - createUser", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       success: true,
-      message: "User list fetched successfully",
+      message: SUCCESS_RESPONSES.RETRIEVED_SUCCESSFULLY,
       data: users,
     });
   });
@@ -93,7 +97,7 @@ describe("User Controller - createUser", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Internal Server Error",
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   });
 
@@ -145,7 +149,7 @@ describe("User Controller - createUser", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       success: true,
-      message: "User updated successfully",
+      message: SUCCESS_RESPONSES.UPDATED_SUCCESSFULLY,
       data: mockUpdatedUser,
     });
   });
@@ -189,7 +193,7 @@ describe("User Controller - createUser", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "User update Failed",
+      message: ERROR_MESSAGES.UPDATE_FAILED,
     });
   });
 
@@ -219,7 +223,7 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findById).toHaveBeenCalledWith("someUserId");
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "User Found successfully",
+      message: SUCCESS_RESPONSES.RETRIEVED_SUCCESSFULLY,
       data: mockUser,
     });
   });
@@ -241,7 +245,7 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findById).toHaveBeenCalledWith("nonExistingUserId");
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      message: "User Search Failed",
+      message: ERROR_MESSAGES.NOT_FOUND,
     });
   });
 
@@ -264,7 +268,7 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findById).toHaveBeenCalledWith("someUserId");
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      message: "Server Error",
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   });
 
@@ -294,7 +298,7 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findByIdAndDelete).toHaveBeenCalledWith("someUserId");
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "User Deleted successfully",
+      message: SUCCESS_RESPONSES.DELETED_SUCCESSFULLY,
       data: mockUser,
     });
   });
@@ -318,7 +322,7 @@ describe("User Controller - createUser", () => {
     );
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      message: "User Deletion Failed",
+      message: ERROR_MESSAGES.DELETION_FAILED,
     });
   });
 
@@ -341,7 +345,7 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findByIdAndDelete).toHaveBeenCalledWith("someUserId");
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      message: "Server Error",
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   });
 
@@ -483,7 +487,9 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findById).toHaveBeenCalledWith("nonExistingUserId");
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: ERROR_MESSAGES.NOT_FOUND,
+    });
   });
 
   it("should handle server error", async () => {
@@ -506,6 +512,8 @@ describe("User Controller - createUser", () => {
     expect(UserModel.findById).toHaveBeenCalledWith("someUserId");
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+    });
   });
 });

@@ -8,7 +8,7 @@ const validateRequest = (schema: object): ValidateFunction => {
   return ajv.compile(schema);
 };
 
-export const validateRequestBody = (
+export const loginValidateMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction

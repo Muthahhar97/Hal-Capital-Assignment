@@ -3,6 +3,7 @@ import { login } from "../controllers/auth.controller";
 import UserModel from "../models/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { ERROR_MESSAGES } from "../libs/constants/responses.const";
 
 jest.mock("../models/user.model");
 jest.mock("bcrypt");
@@ -33,7 +34,7 @@ describe("Auth Controller - login", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Invalid username or password",
+      message: ERROR_MESSAGES.INVALID_CREDENTIALS,
     });
   });
 
@@ -48,7 +49,7 @@ describe("Auth Controller - login", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Invalid username or password",
+      message: ERROR_MESSAGES.INVALID_CREDENTIALS,
     });
   });
 
@@ -75,6 +76,8 @@ describe("Auth Controller - login", () => {
     await login(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Server error" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+    });
   });
 });

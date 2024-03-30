@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { USER_MODEL } from "../libs/constants/user.const";
 
 interface IUser extends mongoose.Document {
   username: string;
@@ -36,7 +37,7 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-const UserModel = mongoose.model<IUser>("User", UserSchema);
+const UserModel = mongoose.model<IUser>(USER_MODEL, UserSchema);
 
 export default UserModel;
 

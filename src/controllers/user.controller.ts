@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
 import UserModel from "../models/user.model";
+import { StatusCodes } from "http-status-codes";
+import {
+  ERROR_MESSAGES,
+  SUCCESS_RESPONSES,
+} from "../libs/constants/responses.const";
 
 /**
  * This method will be used to create a user
@@ -11,20 +16,24 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, age, salary, username, password } = req.body;
     const user = new UserModel({ name, age, salary, username, password });
-    const response = (await user.save()) as any;
-    if (response.password) {
-      delete response.password;
-    }
+    const response = await user.save();
 
-    res.status(201).json({
+    const data = {
+      name: response.name,
+      age: response.age,
+      salary: response.salary,
+      username: response.username,
+    };
+
+    res.status(StatusCodes.CREATED).json({
       success: true,
-      message: "User created successfully",
-      data: response,
+      message: SUCCESS_RESPONSES.CREATED_SUCCESSFULLY,
+      data: data,
     });
   } catch (err) {
     res.send({
       success: false,
-      message: "User Creation Failed",
+      message: ERROR_MESSAGES.CREATED_FAILED,
     });
   }
 };
@@ -37,14 +46,16 @@ export const createUser = async (req: Request, res: Response) => {
  */
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await UserModel.find();
-    return res.status(201).json({
+    const users = await UserModel.find().select("-password");
+    return res.status(StatusCodes.OK).json({
       success: true,
-      message: "User list fetched successfully",
+      message: SUCCESS_RESPONSES.RETRIEVED_SUCCESSFULLY,
       data: users,
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -69,15 +80,22 @@ export const updateUser = async (req: Request, res: Response) => {
       { new: true }
     )) as any;
 
-    delete user.password;
+    const data = {
+      name: user.name,
+      age: user.age,
+      salary: user.salary,
+      username: user.username,
+    };
 
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       success: true,
-      message: "User updated successfully",
-      data: user,
+      message: SUCCESS_RESPONSES.UPDATED_SUCCESSFULLY,
+      data: data,
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: "User update Failed" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -91,22 +109,27 @@ export const getUser = async (req: Request, res: Response) => {
   try {
     const user = (await UserModel.findById(req.params.id)) as any;
     if (user) {
-      delete user.password;
+      const data = {
+        name: user.name,
+        age: user.age,
+        salary: user.salary,
+        username: user.username,
+      };
       res.send({
         success: true,
-        message: "User Found successfully",
-        data: user,
+        message: SUCCESS_RESPONSES.RETRIEVED_SUCCESSFULLY,
+        data: data,
       });
     } else {
       res.send({
         success: false,
-        message: "User Search Failed",
+        message: ERROR_MESSAGES.NOT_FOUND,
       });
     }
   } catch (err) {
     res.send({
       success: false,
-      message: "Server Error",
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   }
 };
@@ -124,19 +147,19 @@ export const deleteUser = async (req: Request, res: Response) => {
       delete user.password;
       res.send({
         success: true,
-        message: "User Deleted successfully",
+        message: SUCCESS_RESPONSES.DELETED_SUCCESSFULLY,
         data: user,
       });
     } else {
       res.send({
         success: false,
-        message: "User Deletion Failed",
+        message: ERROR_MESSAGES.DELETION_FAILED,
       });
     }
   } catch (err) {
     res.send({
       success: false,
-      message: "Server Error",
+      message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   }
 };
@@ -150,7 +173,10 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const getCreditScore = async (req: Request, res: Response) => {
   try {
     const user = await UserModel.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: ERROR_MESSAGES.NOT_FOUND });
 
     let score = 0;
     if (user.age > 30 && user.salary > 10000) {
@@ -163,8 +189,10 @@ export const getCreditScore = async (req: Request, res: Response) => {
       score = 20;
     }
 
-    res.status(200).json({ creditScore: score });
+    res.status(StatusCodes.OK).json({ creditScore: score });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };

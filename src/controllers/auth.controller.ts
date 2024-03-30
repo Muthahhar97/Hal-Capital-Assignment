@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../models/user.model";
+import { StatusCodes } from "http-status-codes";
+import { ERROR_MESSAGES } from "../libs/constants/responses.const";
 
 /**
  * This method will be used to authenticate against a valid username and a password
@@ -15,11 +17,15 @@ export const login = async (req: Request, res: Response) => {
   try {
     const user = await UserModel.findOne({ username });
     if (!user) {
-      return res.status(401).json({ message: "Invalid username or password" });
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid username or password" });
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS });
     }
     const token = jwt.sign(
       { userId: user._id },
@@ -30,6 +36,8 @@ export const login = async (req: Request, res: Response) => {
     );
     res.json({ token });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
