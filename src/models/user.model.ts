@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-interface User extends mongoose.Document {
+interface IUser extends mongoose.Document {
   username: string;
   password: string;
   name: string;
   age: number;
   salary: number;
+  matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema<IUser>({
   username: { type: String, required: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
@@ -35,6 +36,8 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-const UserModel = mongoose.model<User>("User", UserSchema);
+const UserModel = mongoose.model<IUser>("User", UserSchema);
 
 export default UserModel;
+
+export { IUser };
