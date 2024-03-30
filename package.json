@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon dist/index.js"
+    "start": "nodemon dist/index.js",
+    "test": "jest --coverage"
   },
   "author": "Mohammed Muthahhar",
   "license": "ISC",
