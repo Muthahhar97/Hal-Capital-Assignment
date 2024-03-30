@@ -4,6 +4,7 @@ import UserModel from "../models/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ERROR_MESSAGES } from "../libs/constants/responses.const";
+import { MongooseError } from "mongoose";
 
 jest.mock("../models/user.model");
 jest.mock("bcrypt");
@@ -70,7 +71,7 @@ describe("Auth Controller - login", () => {
 
   it("should return 500 if an error occurs", async () => {
     (UserModel.findOne as jest.Mock).mockRejectedValueOnce(
-      new Error("Database error")
+      new MongooseError("Database error")
     );
 
     await login(req as Request, res as Response);
