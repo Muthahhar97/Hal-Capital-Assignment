@@ -3,22 +3,110 @@ import UserModel from "../models/user.model";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { name, age, salary } = req.body;
-    const user = new UserModel({ name, age, salary });
-    await user.save();
-    res.status(201).json({ message: "User created successfully" });
+    const { name, age, salary, username, password } = req.body;
+    const user = new UserModel({ name, age, salary, username, password });
+    const response = await user.save();
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      data: response,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    res.send({
+      success: false,
+      message: "User Creation Failed",
+    });
+  }
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await UserModel.find();
+
+    if (users) {
+      res.status(201).json({
+        success: true,
+        message: "User list fetched successfully",
+        data: users,
+      });
+    } else {
+      res.send({
+        success: true,
+        message: "Request Failed",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { name, age, salary } = req.body;
-    await UserModel.findByIdAndUpdate(req.params.id, { name, age, salary });
-    res.status(200).json({ message: "User updated successfully" });
+    const { name, age, salary, username, password } = req.body;
+    const user = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        age,
+        salary,
+        username,
+        password,
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: user,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "User update Failed" });
+  }
+};
+
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (user) {
+      res.send({
+        success: true,
+        message: "User Found successfully",
+        data: user,
+      });
+    } else {
+      res.send({
+        success: false,
+        message: "User Search Failed",
+      });
+    }
+  } catch (err) {
+    res.send({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.params.id);
+    if (user) {
+      res.send({
+        success: true,
+        message: "User Deleted successfully",
+        data: user,
+      });
+    } else {
+      res.send({
+        success: false,
+        message: "User Deletion Failed",
+      });
+    }
+  } catch (err) {
+    res.send({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
 
