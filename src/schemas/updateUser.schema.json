@@ -6,6 +6,5 @@
     "salary": { "type": "number" },
     "username": { "type": "string" },
     "password": { "type": "string" }
-  },
-  "required": ["name", "age", "salary", "username", "password"]
+  }
 }
